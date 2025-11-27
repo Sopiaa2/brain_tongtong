@@ -1,0 +1,33 @@
+name: Build Debug APK
+
+on:
+  push:
+    branches: [ dev, main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+      
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+      
+      - name: 의존성 설치
+        run: flutter pub get
+      
+      - name: Debug APK 빌드
+        run: flutter build apk --debug
+      
+      - name: APK 업로드
+        uses: actions/upload-artifact@v3
+        with:
+          name: braintong-debug-${{ github.run_number }}
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 30
